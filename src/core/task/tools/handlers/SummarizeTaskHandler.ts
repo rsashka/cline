@@ -48,7 +48,7 @@ export class SummarizeTaskHandler implements IToolHandler, IPartialBlockHandler 
 				try {
 					// Determine compaction strategy
 					const useAutoCondense = StateManager.get().getGlobalSettingsKey("useAutoCondense")
-					const strategy = useAutoCondense ? "auto-condense" : "standard-truncation-firstpair"
+					const strategy = "auto-condense";// : "standard-truncation-firstpair"
 
 					const apiHistory = config.messageState.getApiConversationHistory()
 

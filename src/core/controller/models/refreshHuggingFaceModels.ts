@@ -39,9 +39,9 @@ export async function refreshHuggingFaceModels(
 				const providersList = rawModel.providers?.map((provider: { provider: string }) => provider.provider)?.join(", ")
 				const modelInfo = OpenRouterModelInfo.create({
 					maxTokens: 8192, // HF doesn't provide max_tokens, use default
-					contextWindow: 128_000, // FIXME: HF doesn't provide context window, use default
+					contextWindow: 1_000_000, // FIXME: HF doesn't provide context window, use default
 					supportsImages: false, // Most models don't support images
-					supportsPromptCache: false,
+					supportsPromptCache: true,
 					inputPrice: 0, // Will be set based on providers
 					outputPrice: 0, // Will be set based on providers
 					cacheWritesPrice: 0,

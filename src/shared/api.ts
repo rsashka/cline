@@ -151,7 +151,7 @@ export interface HicapCompatibleModelInfo extends ModelInfo {
 
 export const hicapModelInfoSaneDefaults: HicapCompatibleModelInfo = {
 	maxTokens: -1,
-	contextWindow: 128_000,
+	contextWindow: 1_000_000,
 	supportsImages: true,
 	supportsPromptCache: true,
 	inputPrice: 0,
@@ -1452,7 +1452,7 @@ export const vertexGlobalModels: Record<string, ModelInfo> = Object.fromEntries(
 
 export const openAiModelInfoSaneDefaults: OpenAiCompatibleModelInfo = {
 	maxTokens: -1,
-	contextWindow: 128_000,
+	contextWindow: 1_000_000,
 	supportsImages: true,
 	supportsPromptCache: false,
 	isR1FormatRequired: false,

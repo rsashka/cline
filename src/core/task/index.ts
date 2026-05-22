@@ -2008,7 +2008,7 @@ export class Task {
 			this.taskState.conversationHistoryDeletedRange,
 			previousApiReqIndex,
 			await ensureTaskDirectoryExists(this.taskId),
-			this.stateManager.getGlobalSettingsKey("useAutoCondense") && isNextGenModelFamily(this.api.getModel().id),
+			false,
 		)
 
 		if (contextManagementMetadata.updatedConversationHistoryDeletedRange) {

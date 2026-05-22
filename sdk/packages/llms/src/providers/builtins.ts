@@ -151,8 +151,8 @@ function fallbackModelInfo(id: string, spec?: BuiltinSpec): ModelInfo {
 		name: id,
 	};
 	if (spec?.family === "openai-compatible") {
-		info.contextWindow = 128_000;
-		info.maxInputTokens = 128_000;
+		info.contextWindow = 1_000_000;
+		info.maxInputTokens = 1_000_000;
 		info.capabilities = ["streaming", "tools", "images"];
 	}
 	if (spec?.id === "qwen" || spec?.id === "qwen-code") {

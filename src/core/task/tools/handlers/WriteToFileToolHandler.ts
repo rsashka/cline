@@ -129,7 +129,7 @@ export class WriteToFileToolHandler implements IFullyManagedTool {
 
 			// Use progressive error with token budget awareness
 			const relPath = rawRelPath || "unknown"
-			const contextWindow = config.api.getModel().info.contextWindow ?? 128_000
+			const contextWindow = config.api.getModel().info.contextWindow ?? 1_000_000
 			const lastApiReqTotalTokens = getLastApiReqTotalTokens(config.messageState.getClineMessages())
 			const contextUsagePercent = contextWindow > 0 ? Math.round((lastApiReqTotalTokens / contextWindow) * 100) : undefined
 			const errorMessage = formatResponse.writeToFileMissingContentError(

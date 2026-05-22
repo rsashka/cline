@@ -430,7 +430,7 @@ async function fetchHicapPrivateModels(
 		}
 		models[id] = buildModelFromPrivateSource(id, {
 			name: id,
-			maxInputTokens: 128_000,
+			maxInputTokens: 1_000_000,
 			supportsImages: true,
 			supportsPromptCache: true,
 		});
