@@ -54,7 +54,7 @@ describe("WriteToFileToolHandler consecutiveMistakeCount", () => {
 		})
 
 		it("should allow tooManyMistakes check to see accumulated failures", () => {
-			const maxConsecutiveMistakes = 3
+			const maxConsecutiveMistakes = 10
 
 			// Simulate 3 previous failures
 			taskState.consecutiveMistakeCount = 3
@@ -127,7 +127,7 @@ describe("WriteToFileToolHandler consecutiveMistakeCount", () => {
 		})
 
 		it("should trigger mistake limit after max consecutive diff errors", () => {
-			const maxConsecutiveMistakes = 3
+			const maxConsecutiveMistakes = 10
 			taskState.consecutiveMistakeCount = 0
 
 			// Simulate max consecutive diff errors
@@ -185,7 +185,7 @@ describe("WriteToFileToolHandler consecutiveMistakeCount", () => {
 		 * With the fix, counter accumulates.
 		 */
 		it("should accumulate failures across multiple retry attempts (bug fix verification)", () => {
-			const maxConsecutiveMistakes = 3
+			const maxConsecutiveMistakes = 10
 
 			// Simulate 5 retry attempts with the FIXED behavior
 			for (let attempt = 0; attempt < 5; attempt++) {
@@ -207,7 +207,7 @@ describe("WriteToFileToolHandler consecutiveMistakeCount", () => {
 		})
 
 		it("should NOT accumulate if buggy reset-at-start behavior existed", () => {
-			const maxConsecutiveMistakes = 3
+			const maxConsecutiveMistakes = 10
 			let attemptCount = 0
 
 			// Simulate the BUGGY behavior for comparison
@@ -236,7 +236,7 @@ describe("WriteToFileToolHandler consecutiveMistakeCount", () => {
 		})
 
 		it("should reset counter and allow new operations after successful operation", () => {
-			const maxConsecutiveMistakes = 3
+			const maxConsecutiveMistakes = 10
 
 			// Accumulate 2 failures
 			taskState.consecutiveMistakeCount = 2
@@ -276,7 +276,7 @@ describe("WriteToFileToolHandler consecutiveMistakeCount", () => {
 			taskState.consecutiveMistakeCount.should.equal(3)
 
 			// Now mistake limit would trigger
-			const maxConsecutiveMistakes = 3
+			const maxConsecutiveMistakes = 10
 			const shouldTrigger = taskState.consecutiveMistakeCount >= maxConsecutiveMistakes
 			shouldTrigger.should.be.true()
 		})
@@ -315,7 +315,7 @@ describe("WriteToFileToolHandler consecutiveMistakeCount", () => {
 
 	describe("edge cases", () => {
 		it("should handle counter at max value", () => {
-			const maxConsecutiveMistakes = 3
+			const maxConsecutiveMistakes = 10
 			taskState.consecutiveMistakeCount = maxConsecutiveMistakes
 
 			// Additional errors can still increment
@@ -325,7 +325,7 @@ describe("WriteToFileToolHandler consecutiveMistakeCount", () => {
 		})
 
 		it("should handle counter well above max (late detection)", () => {
-			const maxConsecutiveMistakes = 3
+			const maxConsecutiveMistakes = 10
 
 			// Simulate scenario where check happens after many errors
 			taskState.consecutiveMistakeCount = 10
@@ -361,7 +361,7 @@ describe("WriteToFileToolHandler consecutiveMistakeCount", () => {
 		 * This tests that the counter works correctly regardless of approval mode.
 		 */
 		it("should trigger failure in YOLO mode after max mistakes", () => {
-			const maxConsecutiveMistakes = 3
+			const maxConsecutiveMistakes = 10
 			const yoloModeEnabled = true
 
 			// Simulate consecutive failures
@@ -592,7 +592,7 @@ describe("WriteToFileToolHandler consecutiveMistakeCount", () => {
 		})
 
 		it("should accumulate failures regardless of approval path taken", () => {
-			const maxConsecutiveMistakes = 3
+			const maxConsecutiveMistakes = 10
 
 			// First attempt - auto-approved, but fails
 			taskState.consecutiveMistakeCount++

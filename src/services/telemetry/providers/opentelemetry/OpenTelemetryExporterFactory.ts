@@ -52,11 +52,14 @@ export function createOTLPLogExporter(
 				const grpcEndpoint = endpoint.replace(/^https?:\/\//, "")
 				const credentials = insecure ? grpcCredentials.createInsecure() : grpcCredentials.createSsl()
 
-				exporter = new OTLPLogExporterGRPC({
+				const grpcConfig: Record<string, any> = {
 					url: grpcEndpoint,
 					credentials: credentials,
-					headers,
-				})
+				}
+				if (headers && Object.keys(headers).length > 0) {
+					grpcConfig.metadata = headers
+				}
+				exporter = new OTLPLogExporterGRPC(grpcConfig)
 				break
 			}
 			case "http/json": {
@@ -118,11 +121,14 @@ export function createOTLPMetricReader(
 				const grpcEndpoint = endpoint.replace(/^https?:\/\//, "")
 				const credentials = insecure ? grpcCredentials.createInsecure() : grpcCredentials.createSsl()
 
-				exporter = new OTLPMetricExporterGRPC({
+				const metricGrpcConfig: Record<string, any> = {
 					url: grpcEndpoint,
 					credentials: credentials,
-					headers,
-				})
+				}
+				if (headers && Object.keys(headers).length > 0) {
+					metricGrpcConfig.metadata = headers
+				}
+				exporter = new OTLPMetricExporterGRPC(metricGrpcConfig)
 				break
 			}
 			case "http/json": {
