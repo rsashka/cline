@@ -48,6 +48,10 @@ export interface PluginSandboxOptions extends PluginTargeting {
 
 type AgentExtension = NonNullable<AgentConfig["extensions"]>[number];
 type AgentExtensionApi = Parameters<NonNullable<AgentExtension["setup"]>>[0];
+type SandboxedAgentExtension = AgentExtension & {
+	/** Internal metadata used by settings surfaces that need source paths. */
+	__clinePluginPath?: string;
+};
 
 type SandboxedContributionDescriptor = {
 	id: string;
@@ -108,6 +112,45 @@ function isUnknownPluginIdError(error: unknown): boolean {
 	return message.includes("Unknown sandbox plugin id:");
 }
 
+function getPlatformPackageName(): string {
+	const platform = process.platform === "win32" ? "windows" : process.platform;
+	return `@cline/cli-${platform}-${process.arch}`;
+}
+
+function resolveBootstrapFromWrapper(): string | undefined {
+	const wrapperPath = process.env.CLINE_WRAPPER_PATH?.trim();
+	if (!wrapperPath) {
+		return undefined;
+	}
+	try {
+		const requireFromWrapper = createRequire(wrapperPath);
+		const packageJsonPath = requireFromWrapper.resolve(
+			`${getPlatformPackageName()}/package.json`,
+		);
+		const candidate = join(
+			dirname(packageJsonPath),
+			"extensions",
+			"plugin-sandbox-bootstrap.js",
+		);
+		return existsSync(candidate) ? candidate : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+function resolveBootstrapFromExecutable(): string | undefined {
+	const execPath = process.execPath?.trim();
+	if (!execPath) {
+		return undefined;
+	}
+	const candidate = join(
+		dirname(dirname(execPath)),
+		"extensions",
+		"plugin-sandbox-bootstrap.js",
+	);
+	return existsSync(candidate) ? candidate : undefined;
+}
+
 /**
  * Resolve the bootstrap for the sandbox subprocess.
  *
@@ -127,8 +170,12 @@ function resolveBootstrap(): { file: string } | { script: string } {
 		join(dir, "plugin-sandbox-bootstrap.js"),
 		join(dir, "extensions", "plugin-sandbox-bootstrap.js"),
 		join(dir, "agents", "plugin-sandbox-bootstrap.js"),
+		resolveBootstrapFromWrapper(),
+		resolveBootstrapFromExecutable(),
 	];
-	for (const candidate of candidates) {
+	for (const candidate of candidates.filter(
+		(candidate): candidate is string => typeof candidate === "string",
+	)) {
 		if (existsSync(candidate)) return { file: candidate };
 	}
 	const tsPath = join(dir, "plugin-sandbox-bootstrap.ts");
@@ -222,8 +269,9 @@ export async function loadSandboxedPlugins(
 
 	const extensions: NonNullable<AgentConfig["extensions"]> = descriptors.map(
 		(descriptor) => {
-			const extension: AgentExtension = {
+			const extension: SandboxedAgentExtension = {
 				name: descriptor.name,
+				__clinePluginPath: descriptor.pluginPath,
 				manifest: descriptor.manifest,
 				setup: (api: AgentExtensionApi) => {
 					registerTools(
